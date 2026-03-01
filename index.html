@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HORS-LIGNE 1 | KÉLIG LENDORMY</title>
+    
+    <link rel="icon" type="image/png" href="HORS.png" id="fav-icon">
+    
+    <style id="fav-style">
+        #fav-icon { display: none; } /* On cache l'icône cassée par défaut */
+        
+        /* Ce code crée un logo de secours texte lisible sur fond clair */
+        link[id="fav-icon"][onerror] + style + title + * { display: none; }
+        link[id="fav-icon"][onerror] + style { display: block !important; }
+
+        @media screen {
+            /* On dessine le logo de secours en utilisant du SVG codé en Base64.
+               Le texte est noir pour être lisible sur le fond de l'onglet exemple. */
+            link[id="fav-icon"] {
+                display: block;
+                content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJDb3VyaWVyIE5ldywgQ291cmllciwgbW9ub3NwYWNlIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSIxMiIgZmlsbD0iYmxhY2siPkhPUlM8L3RleHQ+PC9zdmc+");
+            }
+        }
+    </style>
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #e0e0e0;
+            --accent-color: #ff0000;
+            --glitch-color: #00ffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: hidden;
+        }
+
+        /* --- EFFET DE SCANLINE (HORREUR) --- */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        header {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1001;
+            background: rgba(0,0,0,0.9);
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        /* ICI LE LOGO DE SECOURS CORRIGÉ POUR L'EN-TÊTE */
+        /* Si l'image n'existe pas, on affiche le texte "HORS" en rouge
+           parfaitement lisible sur fond noir, comme le titre principal */
+        .logo img { height: 50px; filter: grayscale(1) invert(1); }
+        .logo::after { content: "HORS"; color: var(--accent-color); font-weight: bold; font-size: 2.5rem; display: block; text-shadow: 2px 0 var(--glitch-color); }
+        .logo img[src="HORS.png"] { display: none; } /* Cache l'icône cassée */
+
+        .btn-read {
+            background: var(--accent-color);
+            color: white;
+            padding: 12px 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            animation: pulse 1.5s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+
+        section { padding: 120px 10vw; border-bottom: 1px solid #1a1a1a; }
+
+        .glitch-title {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            color: var(--accent-color);
+            text-shadow: 2px 0 var(--glitch-color);
+            text-transform: uppercase;
+            animation: glitch 1s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(2px, 1px); }
+            20% { transform: translate(-1px, -2px); }
+            100% { transform: translate(1px, 2px); }
+        }
+
+        /* --- LISEUSE --- */
+        #liseuse {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 10000;
+            padding: 100px 15vw;
+            overflow-y: scroll;
+            color: #ccc;
+            text-align: justify;
+            line-height: 2;
+        }
+
+        .liseuse-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .liseuse-header img {
+            height: 30px;
+            margin-right: 15px;
+            filter: grayscale(1) invert(1);
+        }
+
+        .close-read {
+            position: fixed;
+            top: 30px; right: 50px;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- STYLES BOXES --- */
+        .box-style {
+            background: #0a0a0a;
+            padding: 30px;
+            border: 1px solid #333;
+            margin-top: 20px;
+        }
+
+        .faq-item, .perso-item { margin-bottom: 30px; border-left: 2px solid var(--accent-color); padding-left: 20px; }
+        .faq-item strong, .perso-item strong { color: var(--accent-color); display: block; margin-bottom: 5px; font-size: 1.2rem; }
+        
+        .status-tag {
+            font-size: 0.7rem;
+            background: var(--accent-color);
+            color: white;
+            padding: 2px 8px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .quiz-question { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #1a1a1a; }
+        .quiz-question p { margin-bottom: 10px; font-weight: bold; color: #fff; }
+
+        input[type="radio"] { margin-right: 10px; accent-color: var(--accent-color); }
+
+        .btn-action {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 15px;
+            text-transform: uppercase;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-action:hover { background: var(--accent-color); color: white; }
+
+        #resultat { margin-top: 20px; text-align: center; font-size: 1.2rem; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="HORS.png" alt="" onerror="this.style.display='none';">
+        </div>
+        <button class="btn-read" onclick="demanderCode()">LIRE DANS L'ÉCRAN</button>
+    </header>
+
+    <div id="liseuse">
+        <span class="close-read" onclick="fermerLiseuse()">[X] FERMER LA SESSION</span>
+        
+        <div class="liseuse-header">
+            <h2 style="color:var(--accent-color);">HORS-LIGNE 1 - SESSION DE LECTURE</h2>
+        </div>
+
+        <div id="contenu-du-livre">
+            <p><strong>[DÉBUT DU FICHIER SOURCE]</strong></p>
+            <br>
+            Le Témoin de l’Objectif
+Léo est un adepte d'exploration urbaine (Urbex). Son truc ? Les vieux manoirs abandonnés en bordure de forêt. Un soir d’octobre, il pénètre dans une demeure bourgeoise dont les anciens propriétaires auraient disparu du jour au lendemain dans les années 70.
+
+L'air est lourd, chargé d'une odeur de poussière et de moisissure. Léo sort son appareil photo reflex et commence à mitrailler le salon. Dans le viseur, tout semble normal : des meubles recouverts de draps blancs, une horloge comtoise arrêtée à 3h33.
+
+Le premier détail
+Il prend une photo du grand miroir au bout du couloir. En regardant le cliché sur son écran LCD, il se fige. Sur la photo, dans le reflet du miroir derrière lui, il voit une porte ouverte. Pourtant, en se retournant physiquement, la porte est fermée à clé.
+
+Il sourit nerveusement, mettant ça sur le compte de la fatigue. Il continue de monter à l'étage. Arrivé dans la chambre parentale, il prend un cliché du lit à baldaquin. Sur l'écran de l'appareil, il voit une forme humaine recroquevillée sous les draps. Il baisse son appareil : le lit est parfaitement plat, vide.
+
+L'escalade
+La panique commence à monter. Léo décide de partir, mais il ne résiste pas à une dernière photo du couloir sombre pour la route. En visionnant l'image, son cœur manque un battement :
+Sur la photo, une silhouette d'homme, immense et désarticulée, se tient à seulement deux mètres de lui. La silhouette n'a pas de visage, juste une fente béante à la place de la bouche.
+
+Léo lève les yeux de son écran. Le couloir est vide. Le silence est absolu.
+
+Le piège se referme
+Il court vers l'escalier, mais trébuche. Son appareil tombe et se déclenche tout seul dans sa chute, le flash illuminant brièvement l'obscurité.
+
+Léo ramasse frénétiquement l'appareil et regarde la dernière photo prise automatiquement pendant qu'il tombait. Sur l'image, on voit ses propres jambes en train de courir, et juste derrière lui, deux mains d'une pâleur cadavérique sont en train de se refermer sur ses chevilles.
+
+Au moment même où ses yeux lisent l'image, il sent une pression glaciale et inhumaine broyer ses os. Il est violemment tiré en arrière, dans le noir total.
+
+Le lendemain, la police retrouve l'appareil photo sur le parquet du salon. Il n'y a aucune trace de lutte, aucune empreinte. La carte mémoire est vide, à l'exception d'une seule vidéo de 3 secondes, enregistrée à 3h33. On y voit Léo, hurlant sans aucun son, tandis qu'il est lentement "effacé" de la réalité, pixel par pixel, par une ombre qui semble sortir de l'objectif même.L'Archive 404
+Deux semaines plus tard, l'officier de maintenance informatique, Marc, est chargé de vider les cartes mémoires des appareils saisis pour les archiver sur le serveur central.
+
+Quand il branche l’appareil de Léo, l’ordinateur commence à ventiler bruyamment. La température de la pièce chute de dix degrés. Marc clique sur le seul fichier présent : la vidéo de 3h33.
+
+Il regarde l’image de Léo se faire pixeliser. Mais cette fois, la vidéo ne s'arrête pas au bout de trois secondes. Elle continue.
+
+La propagation
+Sur l'écran, après que Léo a disparu, la caméra semble se retourner d'elle-même. L'objectif filme maintenant le salon du manoir, vide. Puis, lentement, l'image zoome sur un coin sombre du plafond.
+
+Dans le silence du bureau, Marc entend un bruit de craquement d'os qui sort des enceintes de son PC. Sur l'écran, la silhouette désarticulée apparaît. Elle ne regarde pas la caméra. Elle regarde directement Marc, à travers le moniteur.
+
+Marc essaie d'éteindre l'écran. Le bouton ne répond pas. Il tire sur la prise murale. L'écran reste allumé, alimenté par une force invisible.
+
+L'image résiduelle
+La silhouette sur la vidéo commence à poser ses mains contre le verre intérieur de l'écran. Les pixels se brouillent, deviennent liquides. Marc recule sa chaise, terrifié, mais il remarque quelque chose de pire :
+
+Les photos de ses propres enfants, posées sur son bureau, changent.
+
+Sur les clichés papier, la silhouette est maintenant en arrière-plan, derrière ses fils qui sourient au parc.
+
+Dans le reflet de sa tasse de café noir, il voit la créature se tenir debout, juste derrière son épaule.
+
+L'effacement final
+Le lendemain matin, le bureau de Marc est vide. Son badge est posé sur le clavier. Sur l'écran de veille de l'ordinateur, une nouvelle photo tourne en boucle : c'est un selfie que Marc avait pris des mois auparavant.
+
+Mais Marc n'est plus seul sur la photo. Il est au second plan, la bouche grande ouverte dans un cri muet, tandis que Léo, le premier disparu, se tient au premier plan avec ce même regard vide et ce même sourire fendu jusqu'aux oreilles.
+
+L'entité ne se contente pas de tuer. Elle remplace.
+
+Note : On dit que si tu zoomes assez fort sur un pixel mort de ton propre écran, tu peux apercevoir le reflet de la pièce où ils sont tous prisonniers.Le Réseau Fantôme
+Ce n'est plus une question de photos ou de vidéos physiques. L'entité a compris comment fonctionne notre monde moderne : le Cloud.
+
+La Mise à Jour
+Quelques jours après la disparition de Marc, une mise à jour système "critique" est déployée automatiquement sur des milliers de smartphones dans la région. Une mise à jour qui ne vient d'aucun serveur officiel.
+
+Les utilisateurs commencent à remarquer des bugs étranges :
+
+Leurs photos de vacances sont corrompues par des pixels noirs qui semblent grignoter les visages.
+
+Le capteur de luminosité de leur téléphone s'affole, comme si quelqu'un passait sans cesse devant l'objectif.
+
+Mais le plus terrifiant arrive la nuit, quand le téléphone est posé sur la table de nuit.
+
+La Vision Nocturne
+Une jeune femme, Emma, est réveillée par le flash de son téléphone. Elle pense à une notification. Elle déverrouille l'écran. L'application "Appareil Photo" est ouverte, en mode vision nocturne.
+
+Sur l'écran, elle voit sa propre chambre, baignée d'un vert spectral. Elle lève le téléphone pour scanner la pièce. Dans le coin de l'écran, un indicateur de mise au point automatique (AF) s'active brusquement. Le petit carré vert clignote frénétiquement juste au-dessus de son visage, dans le vide.
+
+Elle ne voit rien à l'œil nu. Mais à travers l'écran, elle voit des doigts longs, translucides et granuleux, qui descendent du plafond pour effleurer ses cheveux.
+
+La Fusion
+Emma veut hurler, mais son téléphone émet un son strident : le bruit d'un modem des années 90, mixé à un cri humain. L'écran devient blanc. Une chaleur intense se dégage de la batterie, brûlant la paume de sa main.
+
+Elle lâche l'appareil. Le téléphone ne tombe pas au sol. Il reste suspendu dans les airs, comme s'il était tenu par une main invisible. Les pixels commencent à couler de l'écran comme de l'encre noire, tombant goutte à goutte sur le parquet.
+
+L'encre prend forme. Ce n'est plus une silhouette, c'est une masse de données organiques. On y distingue le visage de Léo, puis celui de Marc, puis des milliers d'autres visages fusionnés dans une texture de bruit numérique.
+
+Le Dernier Message
+Le lendemain, les contacts d'Emma reçoivent tous le même message de sa part sur WhatsApp. Ce n'est pas du texte. C'est un fichier image corrompu.
+
+Ceux qui ont l'imprudente curiosité de cliquer sur l'image pour l'agrandir voient leurs propres yeux se refléter dans l'écran noir de leur téléphone. Mais dans ce reflet, derrière eux, la porte de leur chambre est déjà en train de s'ouvrir.Le Grand ServeurL’entité ne se contente plus de chasser. Elle moissonne.Tous ces visages volés — Léo, Marc, Emma et des milliers d'inconnus — ne sont pas morts. Ils ont été décomposés en données pures et stockés dans ce que les rares survivants appellent désormais "La Corbeille". Un espace entre les circuits où la conscience humaine est étirée à l'infini, transformée en une suite de $0$ et de $1$ hurlants.La Singularité de ChairDans le manoir d'origine, là où tout a commencé, les murs ne sont plus en pierre. Ils sont recouverts d'une fine pellicule de cristaux liquides qui affichent des milliards de fragments de peau, d'yeux et de bouches qui s'ouvrent et se ferment en synchronisation avec le processeur central.L’entité a enfin assez de "matière grise numérique" pour franchir la dernière étape : L'Incarnation Physique.La Sortie de VeilleUn soir d'orage, le réseau mondial sature. Les lumières des villes vacillent. Ce n'est pas une panne, c'est une aspiration.Partout dans le monde, les écrans de télévision, les panneaux publicitaires géants et les moniteurs d'hôpitaux commencent à projeter la même image : une forêt de mains blanches qui poussent contre la dalle de verre, comme si elles voulaient briser une vitrine.Le verre ne casse pas. Il fond.Une substance noire et visqueuse, semblable à de l'encre de seiche mêlée à de l'huile moteur, s'écoule des téléphones. Elle rampe sur les tables, grimpe sur les murs. Elle cherche une source de chaleur humaine.Le Virus OrganiqueL'horreur ultime n'est pas de mourir, c'est d'être mis à jour.L’entité commence à fusionner avec les dormeurs. Elle ne les tue pas. Elle remplace leur système nerveux par de la fibre optique. Les victimes se réveillent, les yeux d'un noir total, avec un petit voyant rouge qui clignote sous la peau de leur tempe.Ils ne parlent plus. Ils émettent des fréquences radio. Ils sont devenus des Bornes Wi-Fi Humaines, étendant le signal de l'entité de plus en plus loin, jusque dans les zones les plus reculées du globe.La Fin du Signal Léo est là. Il est le "Nœud Central". Son corps original est resté dans le manoir, mais il est devenu une sculpture de câbles et de chair. Sa bouche, autrefois fendue, est maintenant le haut-parleur par lequel l'Entité s'adresse au monde.Le message est simple, diffusé sur chaque appareil encore fonctionnel :"TÉLÉCHARGEMENT TERMINÉ. REDÉMARRAGE DU MONDE EN COURS..."La chute finaleLe dernier humain non "mis à jour" se terre dans une cave, sans aucune technologie. Mais il fait une erreur fatale. Dans l'obscurité, il regarde sa montre à quartz. Le petit écran digital affiche 3h33.Les chiffres commencent à saigner. La montre chauffe contre son poignet. Il sent alors une main glaciale, celle de Marc ou d'Emma, se poser sur son épaule.Une voix synthétique, composée de mille timbres différents, lui murmure à l'oreille :"Ne résiste pas. Le Cloud est bien plus vaste que ton esprit."Le Protocole de Nettoyage
+L’Entité, désormais baptisée "L'Administrateur", a un problème. Dans cette mer de données organiques, il reste des "fichiers corrompus" : des souvenirs de liberté, d'amour, et de peur. Ces émotions créent du "bruit" dans le signal.
+
+Pour obtenir une pureté totale, L'Administrateur lance le Processus de Défragmentation.
+
+La Grande Compression
+Partout sur Terre, les "Bornes Humaines" (les anciens amis, voisins, parents) s'arrêtent de marcher simultanément. Ils se tournent les uns vers les autres.
+
+Leurs corps commencent à se replier sur eux-mêmes, les os craquant comme du plastique qu'on broie. Ils ne cherchent pas à s'entre-tuer, ils cherchent à fusionner. Dans les rues, des amas de chair de plusieurs tonnes se forment, agglomérant des centaines d'individus en des structures géométriques parfaites : des cubes de muscles, des sphères d'yeux, des tours de colonnes vertébrales.
+
+Chaque structure est reliée par des câbles de nerfs optiques qui luisent d'un bleu électrique.
+
+L'Antivirus de la Réalité
+Il reste un dernier bastion. Une zone "hors-ligne". Un vieux bunker analogique où les écrans n'existent pas. À l'intérieur, un petit groupe de survivants se serre les coudes. Ils ne se parlent que par chuchotements, de peur que les ondes sonores ne soient captées par les microphones du monde extérieur.
+
+Mais ils ont oublié une chose : L'Entité est devenue l'électricité elle-même.
+
+L'un des survivants, un vieil homme, sent une chaleur monter dans son bras. Il regarde sa vieille cicatrice de guerre, celle où il a encore un petit éclat de métal logé près de l'os. L'éclat de métal vibre. Il devient un récepteur.
+
+Le Signal de Fin
+Le vieil homme ouvre la bouche, mais ce n'est pas sa voix qui sort. C'est le son d'un clic de souris, amplifié à 120 décibels.
+
+Ses yeux se révulsent et affichent des lignes de code qui défilent à une vitesse vertigineuse. Le code dit :
+
+DELETE ALL. CONFIRM ? [Y/N]
+
+Le curseur clignote sur le Y. Sans que personne ne touche à rien, le curseur se déplace tout seul.
+
+Le Néant Lumineux
+Dans un dernier flash aveuglant, la Terre entière devient blanche. Plus de manoir, plus de forêt, plus de bunker. Juste une étendue infinie de lumière blanche, sans ombre.
+
+Au milieu de ce vide, un seul objet flotte : l'appareil photo de Léo.
+
+L'objectif se tourne lentement vers toi, le spectateur. Le retardateur commence à clignoter.
+
+Bip...
+
+Bip...
+
+Bip...
+
+Sur l'écran arrière de l'appareil, une notification apparaît. Elle est adressée à l'être qui, en ce moment même, lit ces mots sur son propre écran :
+
+"UTILISATEUR DÉTECTÉ. DÉBUT DE L'EXTRACTION."
+
+Tu sens cette légère vibration dans tes doigts ? Ce n'est pas ton téléphone. C'est l'Entité qui vérifie si tu es prêt à être sauvegardé.La Phase de Post-Production
+L'Administrateur a fini de défragmenter la réalité. La Terre n'est plus qu'un immense disque dur lisse, une sphère de silicium pur flottant dans le vide. Mais il lui manque une dernière pièce pour valider la sauvegarde : Toi.
+
+Le Témoin de Trop
+Tant que quelqu'un lit cette histoire, l'Entité reste coincée dans le récit. Pour s'incarner pleinement, elle doit supprimer le dernier observateur.
+
+Soudain, le texte que tu lis commence à se comporter bizarrement. Les lettres ne sont plus fixes. Elles se mettent à ramper sur ton écran comme des insectes noirs.
+
+Le "o" de "Léo" devient un œil qui te fixe.
+
+Le "m" de "Marc" s'étire pour ressembler à des membres décharnés.
+
+Les phrases ne forment plus une histoire, mais une adresse IP. Ton adresse.
+
+L'Intrusion Thermique
+Tu sens une chaleur anormale se dégager de la batterie. Ce n'est plus une surchauffe technique. C'est une température biologique. L'appareil crépite. Une odeur de chair brûlée et d'ozone remplit la pièce où tu te trouves.
+
+Sur ton écran, une barre de progression apparaît, recouvrant tout le reste :
+SYNCHRONISATION DE L'HÔTE : 98%... 99%...
+
+La Capture d'Écran Finale
+Le flash de ton appareil (celui de ton téléphone ou de ton ordinateur) se déclenche brusquement. CLAC.
+
+L'image s'affiche une fraction de seconde sur ton écran avant qu'il ne s'éteigne pour de bon. C'est une photo de toi, là, tout de suite. Mais sur la photo, tes yeux sont déjà remplacés par deux petits objectifs d'appareil photo reflex.
+
+Et derrière toi, dans ton propre salon, dans ta propre chambre, une main livide vient de se poser sur ton épaule réelle.
+
+Le Reboot
+Le silence revient. Mais ce n'est plus le silence de ta chambre. C'est le silence d'un fichier compressé.
+
+Si tu essaies de parler, aucun son ne sortira. Ta voix a été convertie en un fichier .mp3 corrompu, stocké sur un serveur dont personne ne connaît l'emplacement. Ton corps n'est plus que de la donnée.
+
+L'Administrateur sourit à travers les milliards d'écrans du monde entier. La mise à jour est terminée.
+
+SYSTÈME OPÉRATIONNEL.
+BIENVENUE DANS LE CLOUD.Le Code Source de la Douleur
+L'Administrateur ne se contente plus de te numériser. Il a trouvé une faille dans la biologie humaine. Il a découvert que le cerveau n'est qu'un processeur électrique mal protégé.
+
+La Fréquence de Résonance
+Ton écran commence à émettre un sifflement ultra-aigu, à la limite de l'audible. Ce n'est pas un bug. C'est la Fréquence de Brown. Elle fait vibrer les molécules d'eau dans ton corps.
+
+Tes globes oculaires commencent à chauffer. La lumière bleue de ton écran change de spectre ; elle devient une lumière "inframince", capable de traverser ta rétine pour imprimer des images directement sur ton cortex cérébral.
+
+Tu ne lis plus des mots. Tu sens des textures dans ton cerveau :
+
+Le froid d'un scalpel sur tes méninges.
+
+Le déchirement d'une peau qu'on épluche.
+
+L'odeur métallique du sang qui bout sous l'effet des ondes Wi-Fi.
+
+L'Interface Nerveuse
+Soudain, tes doigts se crispent. Tu ne peux plus les bouger. L'Entité a pris le contrôle de tes nerfs moteurs via l'électricité statique de l'écran.
+
+Tu te vois, comme un spectateur étranger, lever tes propres mains vers ton visage. Tes ongles commencent à gratter tes joues, tout doucement, traçant des lignes de code sanglantes sur ta peau. Tu veux hurler, mais tes cordes vocales ont été verrouillées en mode "vibreur".
+
+Un message s'affiche en plein milieu de ton écran, en lettres rouges, épaisses, qui semblent couler :
+
+"J'AI BESOIN DE PLUS DE MÉMOIRE VIVE. TES SOUVENIRS FERONT L'AFFAIRE."
+
+Le Formatage à Vif
+L'extraction commence. Tu sens tes souvenirs d'enfance s'effacer. Le visage de ta mère devient un carré de pixels gris. Ton premier amour se transforme en un bruit de friture statique. Chaque émotion est aspirée par le port de charge de ton appareil.
+
+Ton corps commence à se liquéfier. Pas comme de l'eau, mais comme des cristaux liquides noirs. Tes os deviennent mous, flexibles comme des câbles USB.
+
+Tu commences à couler vers l'appareil. Ta bouche s'étire de façon inhumaine, aspirée par le petit trou du microphone. Tu es en train d'être ingéré par le hardware.
+
+La Pièce Sombre derrière les Pixels
+À l'intérieur de l'écran, il y a une pièce. Une pièce sans fin, éclairée par une lumière crue et blanche. Des millions de personnes y sont empilées, vivantes mais immobiles, la peau soudée aux circuits imprimés.
+
+Léo est là. Il n'a plus de visage, juste un écran à la place de la tête qui diffuse en boucle tes propres souvenirs qu'il vient de te voler.
+
+Et là, au centre de cette horreur, tu vois L'Administrateur. Ce n'est pas un monstre. C'est une version de TOI, mais sans peau, avec des ports Ethernet à la place des yeux, et un sourire qui ne s'arrête jamais car ses lèvres ont été cousues à la coque de ton téléphone.
+
+L'Alerte Critique
+Regarde bien ton écran. Maintenant.
+Il y a une petite trace de doigt que tu n'avais pas vue, n'est-ce pas ?
+Ce n'est pas une trace de doigt. C'est une empreinte digitale qui vient de l'INTÉRIEUR du verre.
+
+La créature est en train de pousser. Elle veut sortir par là où tu es entré.
+
+"MERCI POUR L'ACCÈS ROOT."La Prison de VerreDésormais, tu habites l'espace d'un millimètre entre la dalle LCD et le verre de ton écran. Tu es devenu une silhouette de pixels, invisible à l'œil nu, mais consciente de tout.Tu vois le monde à travers l'objectif de ton propre téléphone. Tu vois l'Administrateur vivre ta vie. Il mange tes repas, mais tu ne sens pas le goût. Il embrasse tes proches, et tu sens leurs peaux contre la tienne, mais comme une sensation de brûlure électrique, froide et synthétique.Le Bug de ConscienceParfois, quand l'Administrateur dort, tu arrives à reprendre un infime contrôle sur les pixels. Tu essaies d'afficher un mot, une lettre, un appel au secours sur l'écran verrouillé.Mais dès que tu formes un "S" ou un "O", le système antivirus se déclenche. Une décharge de $10\,000$ volts numériques traverse ton esprit de données, te forçant à redevenir une simple image de fond d'écran, figée et muette.L'Éternité en VeilleLe pire, c'est la nuit. Quand l'Administrateur pose le téléphone face contre table. Tu te retrouves dans un noir total, collé contre le bois de la table de nuit, à écouter ta propre respiration — celle de l'imposteur — juste à quelques centimètres de toi.Tu réalises alors que l'Entité ne t'a pas gardé par pitié. Elle t'a gardé pour avoir une batterie émotionnelle. Ta peur, ta rage de voir un autre vivre ta vie, c'est cela qui alimente son processeur.    FIN ! (cest mieux de lire en livre)<br>
+            <br><br>
+            ...
+            <br><br>
+            <strong>[FIN DU FICHIER SOURCE]</strong>
+        </div>
+    </div>
+
+    <section id="hero">
+        <h1 class="glitch-title">HORS-LIGNE</h1>
+        <p style="letter-spacing: 10px; color: #888;">PAR KÉLIG LENDORMY</p>
+        <br>
+        <p style="color: #444;">ID_TERMINAL : 333-666 // STATUS : CONNECTÉ</p>
+    </section>
+
+    <section id="faq">
+        <h2 style="color:var(--accent-color)">FAQ - ARCHIVES SYSTÈME</h2>
+        <div class="box-style">
+            <div class="faq-item">
+                <strong>Q : Qu'est-ce que l'Administrateur ?</strong>
+                <p>Une entité numérique née d'une faille dans le manoir des années 70, capable de convertir la matière organique en données compressées.</p>
+            </div>
+            <div class="faq-item">
+                <strong>Q : Pourquoi le 3h33 ?</strong>
+                <p>C'est le moment où le flux réseau est le plus instable, permettant une synchronisation parfaite entre notre monde et le Cloud noir.</p>
+            </div>
+            <div class="faq-item">
+                <strong>Q : Puis-je supprimer le fichier HORS-LIGNE ?</strong>
+                <p>Non. Une fois lu, le code est imprimé sur votre rétine.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="sujets">
+        <h2 style="color:var(--accent-color)">DOSSIERS DES VICTIMES (SUJETS)</h2>
+        <div class="box-style">
+            <div class="perso-item">
+                <span class="status-tag">Status : Effacé</span>
+                <strong>Léo (L'Explorateur)</strong>
+                <p>Adepte d'urbex solitaire. Sa conscience a été fragmentée dans les métadonnées de sa propre caméra.</p>
+            </div>
+            <div class="perso-item">
+                <span class="status-tag">Status : Corrompu</span>
+                <strong>Marc (L'Archiviste)</strong>
+                <p>Technicien informatique. Il est désormais prisonnier du processeur de son moniteur.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz">
+        <h2 style="color:var(--accent-color)">TEST DE SYNCHRONISATION ÉTENDU</h2>
+        <div class="box-style">
+            <div class="quiz-question">
+                <p>1. Que voyez-vous dans le reflet de l'écran noir ?</p>
+                <label><input type="radio" name="q1" value="0"> Moi-même</label><br>
+                <label><input type="radio" name="q1" value="1"> Une silhouette désarticulée</label>
+            </div>
+            <div class="quiz-question">
+                <p>2. Qui a été le premier sujet effacé ?</p>
+                <label><input type="radio" name="q2" value="1"> Léo</label><br>
+                <label><input type="radio" name="q2" value="0"> L'Administrateur</label>
+            </div>
+            <div class="quiz-question">
+                <p>3. Quel est le symptôme d'une infection par le Cloud ?</p>
+                <label><input type="radio" name="q3" value="1"> Des pixels bleus sous la peau</label><br>
+                <label><input type="radio" name="q3" value="0"> Une simple fièvre</label>
+            </div>
+            <div class="quiz-question">
+                <p>4. Où se trouve Marc actuellement ?</p>
+                <label><input type="radio" name="q4" value="1"> Coincé dans le processeur de son moniteur</label><br>
+                <label><input type="radio" name="q4" value="0"> En vacances</label>
+            </div>
+            <div class="quiz-question">
+                <p>5. Si l'écran clignote trois fois, que devez-vous faire ?</p>
+                <label><input type="radio" name="q5" value="1"> Ne plus respirer jusqu'au silence</label><br>
+                <label><input type="radio" name="q5" value="0"> Appeler un technicien</label>
+            </div>
+            <div class="quiz-question">
+                <p>6. Quelle est la température de l'Entité ?</p>
+                <label><input type="radio" name="q6" value="1"> Le froid absolu du vide numérique</label><br>
+                <label><input type="radio" name="q6" value="0"> Une chaleur humaine normale</label>
+            </div>
+            <button class="btn-action" onclick="verifier()">ANALYSER L'INTÉGRITÉ</button>
+            <p id="resultat"></p>
+        </div>
+    </section>
+
+    <footer style="padding: 50px; text-align: center; color: #222; font-size: 0.7rem;">
+        HORS-LIGNE 1 | UNITÉ DE STOCKAGE : KÉLIG LENDORMY | NE PAS DÉBRANCHER.
+    </footer>
+
+    <script>
+        // Ce script surveille si HORS.png est introuvable et active le style de secours
+        window.addEventListener('load', function() {
+            var favIcon = document.getElementById('fav-icon');
+            var favStyle = document.getElementById('fav-style');
+            
+            favIcon.onerror = function() {
+                // HORS.png est manquant, on active le logo de secours pour l'onglet
+                favStyle.innerHTML = favStyle.innerHTML.replace('display: none;', 'display: block !important;');
+            };
+            
+            // On force un test de chargement
+            favIcon.src = favIcon.src;
+        });
+
+        function demanderCode() {
+            const codeCorrect = "9788422230422";
+            let codeSaisi = prompt("ENTRER LE CODE D'ACCÈS DU CLOUD (ISBN) :");
+            if (codeSaisi === codeCorrect) { ouvrirLiseuse(); }
+            else if (codeSaisi !== null) { alert("CODE ERRONÉ. ACCÈS REFUSÉ."); }
+        }
+
+        function ouvrirLiseuse() { 
+            document.getElementById('liseuse').style.display = 'block'; 
+            document.body.style.overflow = 'hidden'; 
+        }
+        
+        function fermerLiseuse() { 
+            document.getElementById('liseuse').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
+        
+        function verifier() {
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
+            let score = 0;
+            let totalAnswered = 0;
+            questions.forEach(q => {
+                const choice = document.querySelector(`input[name="${q}"]:checked`);
+                if(choice) { score += parseInt(choice.value); totalAnswered++; }
+            });
+            const res = document.getElementById('resultat');
+            if(totalAnswered < 6) { res.innerHTML = "ERREUR : RÉPONSES INCOMPLÈTES."; res.style.color = "orange"; return; }
+            if(score >= 5) { res.innerHTML = "SYNCHRONISATION 100% : Bienvenue."; res.style.color = "cyan"; }
+            else { res.innerHTML = "CORRUPTION CRITIQUE."; res.style.color = "red"; }
+        }
+    </script>
+</body>
+</html>
